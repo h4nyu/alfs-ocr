@@ -12,6 +12,7 @@ toolz = "^0.11.1"
 tqdm = "^4.54.1"
 object-detection = {path = "object-detection"}
 torchvision = "^0.8.1"
+requests = "^2.25.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

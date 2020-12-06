@@ -12,3 +12,5 @@ services:
       - .:/srv
       - ./store:/store
     runtime: nvidia
+    environment:
+      - STORE_URL
