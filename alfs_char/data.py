@@ -1,19 +1,63 @@
+import torch
+import typing
 from torch.utils.data import Dataset
+from urllib.parse import urljoin
+from toolz import map
+import base64
+from io import BytesIO
+from torchvision import transforms
+from PIL import Image as PILImage
+import requests
 from object_detection.entities import (
     TrainSample,
     ImageId,
     Image,
+    YoloBoxes,
+    Labels,
 )
 
 
 class TrainDataset(Dataset):
     def __init__(
         self,
+        url: str,
     ) -> None:
         ...
+        self.url = url
+        self.rows: typing.List[typing.Any] = []
+
+        res = requests.post(
+            urljoin(url, "/api/v1/char-image/filter"), json={"hasBox": True}
+        )
+        if res.status_code == 200:
+            self.rows = res.json()
+        self.images: typing.Dict[str, typing.Any] = {}
 
     def __getitem__(self, idx: int) -> TrainSample:
-        ...
+        row = self.rows[idx]
+        res = requests.post(
+            urljoin(self.url, "/api/v1/char-image/find"), json={"id": row["id"]}
+        ).json()
+
+        img = Image(
+            transforms.ToTensor()(PILImage.open(BytesIO(base64.b64decode(res["data"]))))
+        )
+        boxes = YoloBoxes(
+            torch.tensor(
+                [
+                    [
+                        (b["x0"] + b["x1"]) / 2,
+                        (b["y1"] + b["y0"]) / 2,
+                        b["x1"] - b["x0"],
+                        b["y1"] - b["y0"],
+                    ]
+                    for b in res["boxes"]
+                ]
+            )
+        )
+        labels = Labels(torch.tensor([0 for b in boxes]))
+        return ImageId(row["id"]), img, boxes, labels
 
     def __len__(self) -> int:
+        return len(self.rows)
         ...
