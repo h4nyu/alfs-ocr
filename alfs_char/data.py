@@ -31,12 +31,14 @@ class TrainDataset(Dataset):
         )
         if res.status_code == 200:
             self.rows = res.json()
-        self.images: typing.Dict[str, typing.Any] = {}
+        self.cache: typing.Dict[str, typing.Any] = {}
 
     def __getitem__(self, idx: int) -> TrainSample:
-        row = self.rows[idx]
+        id = self.rows[idx]['id']
+        if id in self.cache:
+            return self.cache[id]
         res = requests.post(
-            urljoin(self.url, "/api/v1/char-image/find"), json={"id": row["id"]}
+            urljoin(self.url, "/api/v1/char-image/find"), json={"id": id}
         ).json()
 
         img = Image(
@@ -56,7 +58,8 @@ class TrainDataset(Dataset):
             )
         )
         labels = Labels(torch.tensor([0 for b in boxes]))
-        return ImageId(row["id"]), img, boxes, labels
+        self.cache[id] = (ImageId(id), img, boxes, labels)
+        return self.cache[id]
 
     def __len__(self) -> int:
         return len(self.rows)
