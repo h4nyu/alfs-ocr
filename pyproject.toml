@@ -14,6 +14,8 @@ object-detection = {path = "object-detection"}
 torchvision = "^0.8.1"
 requests = "^2.25.0"
 Pillow = "^8.0.1"
+opencv-python = "^4.4.0"
+albumentations = "^0.5.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

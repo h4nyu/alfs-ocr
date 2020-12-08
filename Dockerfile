@@ -4,7 +4,7 @@ ENV CUDA_VERSION=10.2.89 \
     NVIDIA_VISIBLE_DEVICES=all \
     PATH=/root/.poetry/bin:$PATH
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl gnupg2 \
+    && apt-get install -y --no-install-recommends curl gnupg2 libgl1-mesa-dev \
     && curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub | apt-key add - \ 
     && echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list  \
     && echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list \
