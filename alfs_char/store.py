@@ -23,7 +23,7 @@ class ImageRepository:
 
     def filter(self) -> Rows:
         return requests.post(
-            urljoin(self.url, "/api/v1/char-image/filter"), json={"hasBox": True}
+                urljoin(self.url, "/api/v1/char-image/filter"), json={"hasBox": True, "state": "Done"}
         ).json()
 
     def find(self, id: str) -> Row:

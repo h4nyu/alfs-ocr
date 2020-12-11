@@ -52,7 +52,10 @@ def train(epochs: int) -> None:
         key=config.metric[0],
         best_watcher=BestWatcher(mode=config.metric[1]),
     )
-    criterion = Criterion()
+    criterion = Criterion(
+        topk=config.topk,
+        box_weight=config.box_weight,
+    )
     optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
     visualize = Visualize("/store/efficientdet", "test", limit=2)
     get_score = MeanPrecition()

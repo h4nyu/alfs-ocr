@@ -44,10 +44,10 @@ train_transforms = albm.Compose(
             min_height=config.image_size,
             border_mode=cv2.BORDER_CONSTANT,
             ),
-        RandomLayout(config.image_size, config.image_size, (0.8, 2.0)),
+        RandomLayout(config.image_size, config.image_size, (0.9, 1.1)),
         albm.RandomBrightnessContrast(),
         ToTensorV2(),
-        ],
+    ],
     bbox_params=bbox_params,
 )
 
@@ -77,7 +77,7 @@ class TrainDataset(Dataset):
                     ]
                     for b in res["boxes"]
                 ]
-            ).clamp(max=1.0 - 1e-3, min=0.0 + 1e-3)
+            ).clamp(max=1.0 - 1e-2, min=0.0 + 1e-2)
         )
         labels = Labels(torch.tensor([0 for b in boxes]))
         res = self.transforms(image=image, bboxes=boxes, labels=labels)
