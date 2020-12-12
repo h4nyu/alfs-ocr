@@ -6,6 +6,7 @@ import numpy as np
 import base64
 from io import BytesIO
 from .store import ImageRepository
+import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 from PIL import Image as PILImage
 import os
@@ -43,8 +44,18 @@ train_transforms = albm.Compose(
             min_width=config.image_size,
             min_height=config.image_size,
             border_mode=cv2.BORDER_CONSTANT,
-            ),
+        ),
         RandomLayout(config.image_size, config.image_size, (0.9, 1.1)),
+        A.OneOf(
+            [
+                A.IAAAdditiveGaussianNoise(),
+                A.GaussNoise(),
+            ],
+            p=0.2,
+        ),
+        A.ShiftScaleRotate(shift_limit=0.0625, scale_limit=0.2, rotate_limit=15, p=0.2),
+        A.Cutout(),
+        A.ColorJitter(p=0.2),
         albm.RandomBrightnessContrast(),
         ToTensorV2(),
     ],
@@ -53,11 +64,12 @@ train_transforms = albm.Compose(
 
 
 class TrainDataset(Dataset):
-    def __init__(self,
-            repo: ImageRepository,
-            rows: Rows,
-            mode: typing.Literal["test", "train"]="train",
-        ) -> None:
+    def __init__(
+        self,
+        repo: ImageRepository,
+        rows: Rows,
+        mode: typing.Literal["test", "train"] = "train",
+    ) -> None:
         self.repo = repo
         self.rows = rows
         self.transforms = train_transforms if mode == "train" else test_transforms
@@ -65,7 +77,9 @@ class TrainDataset(Dataset):
     def __getitem__(self, idx: int) -> TrainSample:
         id = self.rows[idx]["id"]
         res = self.repo.find(id)
-        image = np.array(PILImage.open(BytesIO(base64.b64decode(res["data"]))).convert('RGB'))
+        image = np.array(
+            PILImage.open(BytesIO(base64.b64decode(res["data"]))).convert("RGB")
+        )
         boxes = YoloBoxes(
             torch.tensor(
                 [
@@ -80,12 +94,12 @@ class TrainDataset(Dataset):
             ).clamp(max=1.0 - 1e-2, min=0.0 + 1e-2)
         )
         labels = Labels(torch.tensor([0 for b in boxes]))
-        res = self.transforms(image=image, bboxes=boxes, labels=labels)
+        transed = self.transforms(image=image, bboxes=boxes, labels=labels)
         return (
             ImageId(id),
-            Image(res['image'] / 255),
-            YoloBoxes(torch.tensor(res['bboxes'])),
-            Labels(torch.tensor(res['labels'])),
+            Image(transed["image"] / 255),
+            YoloBoxes(torch.tensor(transed["bboxes"])),
+            Labels(torch.tensor(transed["labels"])),
         )
 
     def __len__(self) -> int:

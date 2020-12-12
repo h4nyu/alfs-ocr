@@ -11,6 +11,10 @@ services:
     volumes:
       - .:/srv
       - ./store:/store
+      - ./.cache:/root/.cache
     runtime: nvidia
+    command: python alfs_char/web.py
     environment:
       - STORE_URL
+    ports:
+      - "$PORT:5000"

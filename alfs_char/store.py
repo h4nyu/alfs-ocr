@@ -19,15 +19,16 @@ Rows = typing.List[Row]
 class ImageRepository:
     def __init__(self, url: str = os.getenv("STORE_URL", "")) -> None:
         self.url = url
-        self.cache:typing.Dict[str,Row] = {}
+        self.cache: typing.Dict[str, Row] = {}
 
     def filter(self) -> Rows:
         return requests.post(
-                urljoin(self.url, "/api/v1/char-image/filter"), json={"hasBox": True, "state": "Done"}
+            urljoin(self.url, "/api/v1/char-image/filter"),
+            json={"hasBox": True, "state": "Done"},
         ).json()
 
     def find(self, id: str) -> Row:
-        if(id not in self.cache):
+        if id not in self.cache:
             self.cache[id] = requests.post(
                 urljoin(self.url, "/api/v1/char-image/find"), json={"id": id}
             ).json()
