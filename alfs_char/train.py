@@ -34,7 +34,7 @@ test_dataset = TrainDataset(
     rows[int(image_count * 0.8) :],
     mode="test",
 )
-backbone = EfficientNetBackbone(2, out_channels=config.channels, pretrained=True)
+backbone = EfficientNetBackbone(config.backbone_idx, out_channels=config.channels, pretrained=True)
 anchors = Anchors(
     size=config.anchor_size,
     ratios=config.anchor_ratios,
