@@ -14,8 +14,8 @@ lr = 1e-4
 out_ids: List[Any] = [4, 5, 6, 7]
 
 # criterion
-box_weight = 1.0
-topk = 21
+box_weight = 5.0
+topk = 25
 
 out_dir = "/store/efficientdet"
 metric: Tuple[str, WatchMode] = ("score", "max")
