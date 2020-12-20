@@ -15,7 +15,6 @@ Row = typing.TypedDict(
 )
 Rows = typing.List[Row]
 
-
 class ImageRepository:
     def __init__(self, url: str = os.getenv("STORE_URL", "")) -> None:
         self.url = url

@@ -6,7 +6,7 @@ confidence_threshold = 0.5
 batch_size = 2
 image_size = 1024
 
-backbone_idx = 2
+backbone_idx = 4
 # model
 channels = 128
 depth = 1
@@ -14,8 +14,8 @@ lr = 1e-4
 out_ids: List[Any] = [4, 5, 6, 7]
 
 # criterion
-box_weight = 5.0
-topk = 25
+box_weight = 10.0
+topk = 29
 
 out_dir = "/store/efficientdet"
 metric: Tuple[str, WatchMode] = ("score", "max")
