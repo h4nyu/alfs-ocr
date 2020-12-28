@@ -1,4 +1,4 @@
-from alfs_char.web import detect, UploadPayload
+from alfs_char.web import app
 from alfs_char.store import ImageRepository
 
 
@@ -8,5 +8,6 @@ def test_detect() -> None:
     if len(rows) == 0:
         return
     row = repo.find(rows[0]["id"])
-    payload = UploadPayload(data=row["data"])
-    detect(payload)
+    with app.test_client() as client:
+        res = client.post("/api/upload-image", json=dict(data=row["data"]))
+        assert res.status_code == 200

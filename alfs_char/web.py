@@ -19,10 +19,11 @@ CORS(app)
 model_loader.load_if_needed(model)
 device = torch.device("cuda")
 
+
 @torch.no_grad()
 def detect() -> Any:
     image = np.array(
-        PILImage.open(BytesIO(base64.b64decode(request.json['data']))).convert("RGB")
+        PILImage.open(BytesIO(base64.b64decode(request.json["data"]))).convert("RGB")
     )
     img_tensor = test_transforms(image=image, labels=[], bboxes=[])["image"]
     batch = torch.stack([img_tensor / 255]).to(device)
@@ -34,7 +35,7 @@ def detect() -> Any:
     buffer = BytesIO()
     out_img.save(buffer, format="JPEG")
     return jsonify(
-        image=base64.b64encode(buffer.getvalue()).decode('utf-8'),
+        image=base64.b64encode(buffer.getvalue()).decode("utf-8"),
         boxes=out_boxes.tolist(),
         scores=out_scores.tolist(),
     )
