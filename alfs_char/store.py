@@ -22,13 +22,13 @@ class ImageRepository:
 
     def filter(self) -> Rows:
         return requests.post(
-            urljoin(self.url, "/api/v1/char-image/filter"),
+            urljoin(self.url, "/api/v1/image/filter"),
             json={"hasBox": True, "state": "Done"},
         ).json()
 
     def find(self, id: str) -> Row:
         if id not in self.cache:
             self.cache[id] = requests.post(
-                urljoin(self.url, "/api/v1/char-image/find"), json={"id": id}
+                urljoin(self.url, "/api/v1/image/find"), json={"id": id}
             ).json()
         return self.cache[id]

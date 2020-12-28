@@ -46,7 +46,7 @@ model = EfficientDet(
     backbone=backbone,
     anchors=anchors,
     out_ids=config.out_ids,
-    depth=config.depth,
+    box_depth=config.depth,
 )
 model_loader = ModelLoader(
     out_dir=config.out_dir,
