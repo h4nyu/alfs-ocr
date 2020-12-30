@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
 from typing import List, Any
 import torch
 import numpy as np
@@ -12,11 +13,15 @@ import asyncio
 from alfs_char.train import model, model_loader, to_boxes
 from alfs_char.data import test_transforms
 from alfs_char import config
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
 
 model_loader.load_if_needed(model)
+model.eval()
 device = torch.device("cuda")
 
 
@@ -28,6 +33,7 @@ def detect() -> Any:
     img_tensor = test_transforms(image=image, labels=[], bboxes=[])["image"]
     batch = torch.stack([img_tensor / 255]).to(device)
     netout = model(batch)
+    logger.info(f"{netout[1][0].sum()}")
     boxes_list, scores_list = to_boxes(netout)
     out_boxes = boxes_list[0] / config.image_size
     out_scores = scores_list[0]

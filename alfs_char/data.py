@@ -12,6 +12,7 @@ from PIL import Image as PILImage
 import os
 from object_detection.entities import (
     TrainSample,
+    PredictionSample,
     ImageId,
     Image,
     YoloBoxes,
@@ -100,6 +101,45 @@ class TrainDataset(Dataset):
             Image(transed["image"] / 255),
             YoloBoxes(torch.tensor(transed["bboxes"])),
             Labels(torch.tensor(transed["labels"])),
+        )
+
+    def __len__(self) -> int:
+        return len(self.rows)
+
+class PredictDataset(Dataset):
+    def __init__(
+        self,
+        repo: ImageRepository,
+        rows: Rows,
+    ) -> None:
+        self.repo = repo
+        self.rows = rows
+        self.transforms = test_transforms
+
+    def __getitem__(self, idx: int) -> PredictionSample:
+        id = self.rows[idx]["id"]
+        res = self.repo.find(id)
+        image = np.array(
+            PILImage.open(BytesIO(base64.b64decode(res["data"]))).convert("RGB")
+        )
+        boxes = YoloBoxes(
+            torch.tensor(
+                [
+                    [
+                        (b["x0"] + b["x1"]) / 2,
+                        (b["y1"] + b["y0"]) / 2,
+                        b["x1"] - b["x0"],
+                        b["y1"] - b["y0"],
+                    ]
+                    for b in res["boxes"]
+                ]
+            ).clamp(max=1.0 - 1e-2, min=0.0 + 1e-2)
+        )
+        labels = Labels(torch.tensor([0 for b in boxes]))
+        transed = self.transforms(image=image, bboxes=boxes, labels=labels)
+        return (
+            ImageId(id),
+            Image(transed["image"] / 255),
         )
 
     def __len__(self) -> int:

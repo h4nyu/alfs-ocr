@@ -29,7 +29,20 @@ class ImageRepository:
 
     def find(self, id: str) -> Row:
         if id not in self.cache:
-            self.cache[id] = requests.post(
+            img = requests.post(
                 urljoin(self.url, "/api/v1/image/find"), json={"id": id}
             ).json()
+            boxes = requests.post(
+                urljoin(self.url, "/api/v1/box/filter"),
+                json={"imageId": id, "isGrandTruth": True},
+            ).json()
+            img["boxes"] = boxes
+            self.cache[id] = img
         return self.cache[id]
+
+    def predict(self, id: str, boxes: typing.List[Box]) -> None:
+        res = requests.post(
+            urljoin(self.url, "/api/v1/box/predict"),
+            json={"imageId": id, "boxes": boxes},
+        )
+        res.raise_for_status()
