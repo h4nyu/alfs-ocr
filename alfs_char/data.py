@@ -122,6 +122,7 @@ class PredictDataset(Dataset):
         image = np.array(
             PILImage.open(BytesIO(base64.b64decode(res["data"]))).convert("RGB")
         )
+        print(image.shape)
         boxes = YoloBoxes(
             torch.tensor(
                 [
