@@ -12,13 +12,13 @@ backbone_idx = 4
 channels = 64
 depth = 1
 lr = 1e-4
-out_ids: List[Any] = [5, 6]
+out_ids: List[Any] = [4, 5, 6]
 
 # criterion
 box_weight = 100.0
 topk = 29
 
-out_dir = "/store/efficientdet"
+out_dir = "/store/efficientdet-456"
 metric: Tuple[str, WatchMode] = ("score", "max")
 pretrained = True
 

@@ -60,7 +60,7 @@ criterion = Criterion(
     box_weight=config.box_weight,
 )
 optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
-visualize = Visualize("/store/efficientdet", "test", limit=6)
+visualize = Visualize(config.out_dir, "test", limit=6)
 get_score = MeanPrecition()
 to_boxes = ToBoxes(
     confidence_threshold=config.confidence_threshold,

@@ -40,6 +40,7 @@ def bench() -> None:
         gt_cls_batch = [x.to(device) for x in gt_cls_batch]
         netout = model(image_batch)
         loss, _, _ = criterion(image_batch, netout, gt_box_batch, gt_cls_batch)
+        loss = loss / len(gt_box_batch[0])
         for boxes, scores, id in zip(*to_boxes(netout), ids):
             boxes_payload = [
                 dict(x0=b[0], y0=b[1], x1=b[2], y1=b[3], imageId=id, confidence=s)
