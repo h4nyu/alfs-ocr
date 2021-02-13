@@ -1,6 +1,7 @@
 from torch.cuda.amp import GradScaler, autocast
 import torch_optimizer as optim
-import torch, tqdm
+import torch
+from tqdm import tqdm
 from typing import Any
 from torch import Tensor
 from torch.utils.data import DataLoader
@@ -28,7 +29,6 @@ from logging import (
 )
 
 logger = getLogger(config.out_dir)
-
 
 optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
 visualize = Visualize(config.out_dir, "test", limit=6)
@@ -76,15 +76,14 @@ def train(epochs: int) -> None:
         train_dataset,
         collate_fn=collate_fn,
         batch_size=config.batch_size,
-        num_workers=1,
+        num_workers=config.batch_size,
         shuffle=True,
     )
     test_loader = DataLoader(
         test_dataset,
         collate_fn=collate_fn,
         batch_size=config.batch_size * 3,
-        num_workers=1,
-        # num_workers=config.batch_size * 3,
+        num_workers=config.batch_size * 3,
         shuffle=True,
         drop_last=True,
     )
@@ -101,6 +100,7 @@ def train(epochs: int) -> None:
     logs: dict[str, float] = {}
 
     def train_step() -> None:
+
         loss_meter = MeanMeter()
         box_loss_meter = MeanMeter()
         label_loss_meter = MeanMeter()
@@ -109,7 +109,10 @@ def train(epochs: int) -> None:
             gt_box_batch,
             gt_label_batch,
             _,
-        ) in enumerate(train_loader):
+        ) in tqdm(enumerate(train_loader)):
+            if i % 50 == 0:
+                eval_step()
+                log()
             model.train()
             image_batch = image_batch.to(device)
             gt_box_batch = [x.to(device) for x in gt_box_batch]
@@ -133,9 +136,6 @@ def train(epochs: int) -> None:
             logs["train_loss"] = loss_meter.get_value()
             logs["train_box"] = box_loss_meter.get_value()
             logs["train_label"] = label_loss_meter.get_value()
-            if i % 100 == 99:
-                eval_step()
-                log()
 
     @torch.no_grad()
     def eval_step() -> None:
@@ -144,7 +144,7 @@ def train(epochs: int) -> None:
         box_loss_meter = MeanMeter()
         label_loss_meter = MeanMeter()
         metrics = config.metrics
-        for image_batch, gt_box_batch, gt_label_batch, ids in test_loader:
+        for image_batch, gt_box_batch, gt_label_batch, ids in tqdm(test_loader):
             image_batch = image_batch.to(device)
             gt_box_batch = [x.to(device) for x in gt_box_batch]
             gt_label_batch = [x.to(device) for x in gt_label_batch]
@@ -173,7 +173,6 @@ def train(epochs: int) -> None:
         logs["test_box"] = box_loss_meter.get_value()
         logs["test_label"] = label_loss_meter.get_value()
         logs["score"], _ = metrics()
-        print(ids)
         visualize(
             image_batch,
             (box_batch, confidence_batch, label_batch),

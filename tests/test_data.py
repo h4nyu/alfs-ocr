@@ -1,6 +1,7 @@
 from alfs_char.data import TrainDataset
 from object_detection.utils import DetectionPlot
 from alfs_char.store import ImageRepository
+from object_detection.transforms import inv_normalize
 from tqdm import tqdm
 
 
@@ -10,8 +11,8 @@ def test_data() -> None:
     dataset = TrainDataset(repo, rows[:1])
     for i in range(10):
         id, img, boxes, labels = dataset[0]
-        plot = DetectionPlot(img)
-        plot.draw_boxes(boxes)
+        plot = DetectionPlot(inv_normalize(img))
+        plot.draw_boxes(boxes, color="black")
         plot.save(f"/store/tests/test-aug{i}.png")
 
 

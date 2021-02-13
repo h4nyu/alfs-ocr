@@ -7,10 +7,12 @@ import numpy as np
 import base64
 from io import BytesIO
 from .store import ImageRepository
+from .transforms import UnNormalize
 from skimage.io import imread
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 from torchvision.ops.boxes import clip_boxes_to_image, remove_small_boxes
+from object_detection.transforms import normalize_mean, normalize_std
 from PIL import Image as PILImage
 import os
 from object_detection.entities import Image, Boxes, Labels, resize
@@ -29,6 +31,7 @@ test_transforms = albm.Compose(
             min_height=config.image_size,
             border_mode=cv2.BORDER_CONSTANT,
         ),
+        A.Normalize(),
         ToTensorV2(),
     ],
     bbox_params=bbox_params,
@@ -53,6 +56,7 @@ train_transforms = albm.Compose(
         A.Cutout(),
         A.ColorJitter(p=0.2),
         albm.RandomBrightnessContrast(),
+        A.Normalize(),
         ToTensorV2(),
     ],
     bbox_params=bbox_params,
@@ -99,10 +103,11 @@ class TrainDataset(Dataset):
         transed = self.transforms(image=image, bboxes=boxes, labels=labels)
         return (
             id,
-            Image(transed["image"] / 255),
+            Image(transed["image"]),
             Boxes(torch.tensor(transed["bboxes"])),
             Labels(torch.tensor(transed["labels"])),
         )
 
     def __len__(self) -> int:
         return len(self.rows)
+inv_normalize = UnNormalize(normalize_mean, normalize_std)
