@@ -10,9 +10,8 @@ def test_data() -> None:
     dataset = TrainDataset(repo, rows[:1])
     for i in range(10):
         id, img, boxes, labels = dataset[0]
-        plot = DetectionPlot(w=1024, h=1024)
-        plot.with_image(img)
-        plot.with_yolo_boxes(boxes)
+        plot = DetectionPlot(img)
+        plot.draw_boxes(boxes)
         plot.save(f"/store/tests/test-aug{i}.png")
 
 

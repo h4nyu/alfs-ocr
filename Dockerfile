@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.9-slim
 
 ENV CUDA_VERSION=10.2.89 \
     NVIDIA_VISIBLE_DEVICES=all \

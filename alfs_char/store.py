@@ -3,7 +3,16 @@ from urllib.parse import urljoin
 import os
 import typing
 
-Box = typing.TypedDict("Box", {"x0": float, "y0": float, "x1": float, "y1": float, "confidence": typing.Optional[float]})
+Box = typing.TypedDict(
+    "Box",
+    {
+        "x0": float,
+        "y0": float,
+        "x1": float,
+        "y1": float,
+        "confidence": typing.Optional[float],
+    },
+)
 Row = typing.TypedDict(
     "Row",
     {
@@ -26,12 +35,7 @@ class ImageRepository:
             urljoin(self.url, "/api/v1/image/filter"),
             json={"state": "Done"},
         ).json()
-        return [
-            r
-            for r
-            in rows
-            if r['boxCount'] > 0
-        ]
+        return [r for r in rows if r["boxCount"] > 0]
 
     def find(self, id: str) -> Row:
         if id not in self.cache:
@@ -46,9 +50,11 @@ class ImageRepository:
             self.cache[id] = img
         return self.cache[id]
 
-    def predict(self, id: str, boxes: typing.List[Box], loss:typing.Optional[float]=None) -> None:
+    def predict(
+        self, id: str, boxes: typing.List[Box], loss: typing.Optional[float] = None
+    ) -> None:
         res = requests.post(
             urljoin(self.url, "/api/v1/box/predict"),
-            json={"imageId": id, "boxes": boxes, "loss":loss},
+            json={"imageId": id, "boxes": boxes, "loss": loss},
         )
         res.raise_for_status()
