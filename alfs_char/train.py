@@ -1,5 +1,4 @@
 from torch.cuda.amp import GradScaler, autocast
-import torch_optimizer as optim
 import torch
 from tqdm import tqdm
 from typing import Any
@@ -16,13 +15,12 @@ from object_detection.models.effidet import (
     EfficientDet,
     Criterion,
     Visualize,
-    ToBoxes,
     Anchors,
 )
 from alfs_char.data import TrainDataset
 from object_detection.metrics import MeanPrecition
 from alfs_char import config
-from alfs_char.config import model, model_loader, criterion
+from alfs_char.config import model, model_loader, criterion, optimizer
 from alfs_char.store import ImageRepository
 from logging import (
     getLogger,
@@ -30,11 +28,7 @@ from logging import (
 
 logger = getLogger(config.out_dir)
 
-optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
-visualize = Visualize(config.out_dir, "test", limit=6)
-to_boxes = ToBoxes(
-    confidence_threshold=config.confidence_threshold,
-)
+visualize = Visualize(config.out_dir, "test", limit=6, box_limit=100)
 
 
 def collate_fn(
@@ -87,15 +81,14 @@ def train(epochs: int) -> None:
         shuffle=True,
         drop_last=True,
     )
-    optimizer = optim.RAdam(
-        model.parameters(),
-        lr=config.lr,
-        eps=1e-8,
-        betas=(0.9, 0.999),
-    )
     visualize = Visualize(
-        config.out_dir, "test", limit=config.batch_size * 2, transforms=inv_normalize
+        config.out_dir,
+        "test",
+        limit=config.batch_size * 2,
+        transforms=inv_normalize,
+        box_limit=500,
     )
+    to_boxes = config.to_boxes
     scaler = GradScaler()
     logs: dict[str, float] = {}
 
@@ -143,7 +136,7 @@ def train(epochs: int) -> None:
         loss_meter = MeanMeter()
         box_loss_meter = MeanMeter()
         label_loss_meter = MeanMeter()
-        metrics = config.metrics
+        metrics = config.Metrics()
         for image_batch, gt_box_batch, gt_label_batch, ids in tqdm(test_loader):
             image_batch = image_batch.to(device)
             gt_box_batch = [x.to(device) for x in gt_box_batch]

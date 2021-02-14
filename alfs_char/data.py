@@ -7,7 +7,6 @@ import numpy as np
 import base64
 from io import BytesIO
 from .store import ImageRepository
-from .transforms import UnNormalize
 from skimage.io import imread
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
@@ -39,11 +38,21 @@ test_transforms = albm.Compose(
 
 train_transforms = albm.Compose(
     [
-        albm.LongestMaxSize(max_size=config.image_size),
+        # albm.LongestMaxSize(max_size=config.image_size),
         albm.PadIfNeeded(
             min_width=config.image_size,
             min_height=config.image_size,
             border_mode=cv2.BORDER_CONSTANT,
+            p=0.5,
+        ),
+        A.Rotate(limit=(-5, 5), p=1.0, border_mode=0),
+        A.OneOf(
+            [
+                A.Blur(blur_limit=7, p=0.5),
+                A.MotionBlur(blur_limit=7, p=0.5),
+                A.MotionBlur(blur_limit=13, p=0.5),
+            ],
+            p=0.4,
         ),
         A.OneOf(
             [
@@ -52,10 +61,26 @@ train_transforms = albm.Compose(
             ],
             p=0.2,
         ),
-        A.ShiftScaleRotate(shift_limit=0.0625, scale_limit=0.2, rotate_limit=15, p=0.2),
         A.Cutout(),
         A.ColorJitter(p=0.2),
         albm.RandomBrightnessContrast(),
+        A.HueSaturationValue(
+            p=0.3,
+            hue_shift_limit=15,
+            sat_shift_limit=20,
+            val_shift_limit=15,
+        ),
+        A.OneOf(
+            [
+                A.RandomSizedBBoxSafeCrop(
+                    height=config.image_size,
+                    width=config.image_size,
+                    p=1.0,
+                ),
+                A.RandomResizedCrop(height=config.image_size, width=config.image_size),
+            ],
+            p=1.0,
+        ),
         A.Normalize(),
         ToTensorV2(),
     ],
@@ -110,4 +135,3 @@ class TrainDataset(Dataset):
 
     def __len__(self) -> int:
         return len(self.rows)
-inv_normalize = UnNormalize(normalize_mean, normalize_std)
