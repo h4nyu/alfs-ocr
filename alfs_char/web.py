@@ -47,7 +47,7 @@ def detect() -> Any:
     )
 
 
-app.route("/api/upload-image", methods=["POST"])(detect)
+app.route("/detect", methods=["POST"])(detect)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

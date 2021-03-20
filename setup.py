@@ -1,36 +1,30 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
-    name="app",
-    version="0.0.0",
-    description="TODO",
-    author="Xinyuan Yao",
-    author_email="yao.ntno@google.com",
-    license="TODO",
-    packages=find_packages(),
+    name="alfs_char",
+    version="0.1.0",
     install_requires=[
-        "pandas",
-        "scikit-learn",
-        "cytoolz",
-        "matplotlib",
-        "torch",
-        "kaggle",
         "tqdm",
-        "typer",
-        "scikit-image",
-        "torchvision",
-        "torchsummary",
-        "albumentations",
-        "pycocotools",
+        "opencv-python",
         "efficientnet_pytorch",
-        "ensemble-boxes",
-        "object_detection @ git+https://github.com/h4nyu/object-detection",
-        "random_char_image @ git+https://github.com/h4nyu/random-char-image",
+        "torchvision",
+        "torch",
+        "toolz",
+        "vnet"
     ],
     extras_require={
-        "dev": ["mypy", "pytest", "black", "typing_extensions", "memory_profiler"]
-    },
-    entry_points={
-        "console_scripts": ["app=app.cmd:main"],
+        "develop": [
+            "pytest",
+            "black",
+            "pytest-cov",
+            "pytest-benchmark",
+            "mypy",
+            "kaggle",
+            "pandas",
+            "cytoolz",
+            "torch-optimizer",
+            "albumentations",
+            "scikit-learn",
+        ]
     },
 )

@@ -1,22 +1,22 @@
 import torch
 import torch_optimizer as optim
 from typing import Tuple, List, Any
-from object_detection.model_loader import WatchMode
-from object_detection.models.effidet import (
+from vnet.model_loader import WatchMode
+from vnet.effidet import (
     EfficientDet,
     Criterion,
     Visualize,
     ToBoxes,
     Anchors,
 )
-from object_detection.model_loader import (
+from vnet.model_loader import (
     ModelLoader,
     BestWatcher,
 )
-from object_detection.models.backbones.effnet import (
+from vnet.backbones.effnet import (
     EfficientNetBackbone,
 )
-from object_detection.metrics import MeanAveragePrecision
+from vnet.metrics import MeanAveragePrecision
 
 confidence_threshold = 0.1
 iou_threshold = 0.3
