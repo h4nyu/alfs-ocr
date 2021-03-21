@@ -54,7 +54,6 @@ async def detect(payload: DetectionInput) -> DetectionOutput:
     scale, pad = inv_scale_and_pad(original_wh, padded_wh)
     boxes = shift(boxes, (-pad[0], -pad[1]))
     boxes = resize_boxes(boxes, (scale, scale))
-
     return DetectionOutput(
         boxes=boxes.tolist(), confidences=confidences.tolist(),
     )

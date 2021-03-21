@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from torchvision.transforms import ToTensor
 from PIL import Image as PILImage
 from vnet.utils import DetectionPlot
-from vnet import  Boxes, Confidences
+from vnet import  Boxes, Confidences, resize_boxes
 
 
 client = TestClient(app)
@@ -21,7 +21,6 @@ def test_detect() -> None:
     confidences = Confidences(torch.tensor(res['confidences']))
     to_tensor = ToTensor()
     img_tensor = to_tensor(PILImage.open(io.BytesIO(base64.b64decode(row["data"]))).convert("RGB"))
-
     plot = DetectionPlot(img_tensor)
     plot.draw_boxes(boxes, confidences=confidences)
     plot.save(f"store/test_detect_{image_id}.png")
