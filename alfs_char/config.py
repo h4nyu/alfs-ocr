@@ -34,7 +34,6 @@ num_classes = 1
 # criterion
 box_weight = 1.0
 cls_weight = 2.0
-topk = 29
 
 metric: Tuple[str, WatchMode] = ("score", "max")
 pretrained = True
@@ -76,6 +75,8 @@ model_loader = ModelLoader(
     key=metric[0],
     best_watcher=BestWatcher(mode=metric[1]),
 )
+
+topk = anchors.num_anchors * len(out_ids) * 10
 
 criterion = Criterion(
     topk=topk,

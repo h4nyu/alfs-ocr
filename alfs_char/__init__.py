@@ -7,6 +7,7 @@ from logging import (
 )
 import torch
 import numpy as np
+from vnet.utils import init_seed
 
 
 __version__ = "0.1.0"
@@ -16,7 +17,4 @@ stream_handler = StreamHandler()
 handler_format = Formatter("%(asctime)s,%(name)s,%(message)s")
 stream_handler.setFormatter(handler_format)
 logger.addHandler(stream_handler)
-
-torch.manual_seed(0)
-np.random.seed(0)
-torch.cuda.manual_seed(0)
+init_seed()

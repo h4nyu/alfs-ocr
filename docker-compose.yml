@@ -9,7 +9,7 @@ services:
       - ./store:/store
       - ./.cache:/root/.cache
     runtime: nvidia
-    command: python alfs_char/web.py
+    command: uvicorn alfs_char:web:app --reload
     environment:
       - STORE_URL
     ports:

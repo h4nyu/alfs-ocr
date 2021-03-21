@@ -14,12 +14,3 @@ def test_data() -> None:
         plot = DetectionPlot(inv_normalize(img))
         plot.draw_boxes(boxes, color="black")
         plot.save(f"/store/tests/test-aug{i}.png")
-
-
-# def test_predict() -> None:
-#     repo = ImageRepository()
-#     rows = repo.filter()
-#     row = rows[0]
-#     imageId = row["id"]
-#     boxes = [dict(x0=0.1, y0=0.1, x1=0.2, y1=0.2, imageId=imageId)]
-#     repo.predict(imageId, boxes)

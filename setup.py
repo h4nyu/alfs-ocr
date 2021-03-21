@@ -12,6 +12,7 @@ setup(
         "toolz",
         "vnet",
         "fastapi",
+        "uvicorn"
     ],
     extras_require={
         "develop": [
