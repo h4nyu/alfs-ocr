@@ -79,21 +79,12 @@ def train(epochs: int) -> None:
         batch_size=config.batch_size * 3,
         num_workers=config.batch_size * 3,
         shuffle=True,
-        drop_last=True,
-    )
-    visualize = Visualize(
-        config.out_dir,
-        "test",
-        limit=config.batch_size * 2,
-        transforms=inv_normalize,
-        box_limit=500,
     )
     to_boxes = config.to_boxes
     scaler = GradScaler()
     logs: dict[str, float] = {}
 
     def train_step() -> None:
-
         loss_meter = MeanMeter()
         box_loss_meter = MeanMeter()
         label_loss_meter = MeanMeter()

@@ -57,6 +57,3 @@ async def detect(payload: DetectionInput) -> DetectionOutput:
     return DetectionOutput(
         boxes=boxes.tolist(), confidences=confidences.tolist(),
     )
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
