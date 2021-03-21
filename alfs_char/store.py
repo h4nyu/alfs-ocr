@@ -40,7 +40,7 @@ class ImageRepository:
     def find(self, id: str) -> Row:
         if id not in self.cache:
             img = requests.post(
-                urljoin(self.url, "/api/v1/image/find"), json={"id": id}
+                    urljoin(self.url, "/api/v1/image/find"), json={"id": id, "hasData": True}
             ).json()
             boxes = requests.post(
                 urljoin(self.url, "/api/v1/box/filter"),

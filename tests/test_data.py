@@ -1,7 +1,7 @@
 from alfs_char.data import TrainDataset
-from object_detection.utils import DetectionPlot
+from vnet.utils import DetectionPlot
 from alfs_char.store import ImageRepository
-from object_detection.transforms import inv_normalize
+from vnet.transforms import inv_normalize
 from tqdm import tqdm
 
 
@@ -16,10 +16,10 @@ def test_data() -> None:
         plot.save(f"/store/tests/test-aug{i}.png")
 
 
-def test_predict() -> None:
-    repo = ImageRepository()
-    rows = repo.filter()
-    row = rows[0]
-    imageId = row["id"]
-    boxes = [dict(x0=0.1, y0=0.1, x1=0.2, y1=0.2, imageId=imageId)]
-    repo.predict(imageId, boxes)
+# def test_predict() -> None:
+#     repo = ImageRepository()
+#     rows = repo.filter()
+#     row = rows[0]
+#     imageId = row["id"]
+#     boxes = [dict(x0=0.1, y0=0.1, x1=0.2, y1=0.2, imageId=imageId)]
+#     repo.predict(imageId, boxes)

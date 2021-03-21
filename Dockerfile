@@ -20,10 +20,11 @@ RUN apt-get update \
     && ln -s cuda-11.2 /usr/local/cuda \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /srv
-COPY . .
 RUN pip install --no-cache-dir \
     torch==1.8.0+cu111 \
     torchvision==0.9.0+cu111  -f https://download.pytorch.org/whl/torch_stable.html 
-RUN pip install ./vnet \
+
+WORKDIR /srv
+COPY . .
+RUN pip install -e ./vnet \
     && pip install -e .[develop]

@@ -10,7 +10,8 @@ setup(
         "torchvision",
         "torch",
         "toolz",
-        "vnet"
+        "vnet",
+        "fastapi",
     ],
     extras_require={
         "develop": [
@@ -21,7 +22,6 @@ setup(
             "mypy",
             "kaggle",
             "pandas",
-            "cytoolz",
             "torch-optimizer",
             "albumentations",
             "scikit-learn",

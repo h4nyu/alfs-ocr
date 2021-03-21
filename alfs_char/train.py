@@ -4,21 +4,21 @@ from tqdm import tqdm
 from typing import Any
 from torch import Tensor
 from torch.utils.data import DataLoader
-from object_detection.transforms import inv_normalize
-from object_detection.meters import MeanMeter
-from object_detection.entities import (
+from vnet.transforms import inv_normalize
+from vnet.meters import MeanMeter
+from vnet import (
     Boxes,
     ImageBatch,
     Labels,
 )
-from object_detection.models.effidet import (
+from vnet.effidet import (
     EfficientDet,
     Criterion,
     Visualize,
     Anchors,
 )
 from alfs_char.data import TrainDataset
-from object_detection.metrics import MeanPrecition
+from vnet.metrics import MeanPrecition
 from alfs_char import config
 from alfs_char.config import model, model_loader, criterion, optimizer
 from alfs_char.store import ImageRepository

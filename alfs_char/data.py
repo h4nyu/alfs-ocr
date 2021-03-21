@@ -7,19 +7,17 @@ import numpy as np
 import base64
 from io import BytesIO
 from .store import ImageRepository
-from skimage.io import imread
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 from torchvision.ops.boxes import clip_boxes_to_image, remove_small_boxes
-from object_detection.transforms import normalize_mean, normalize_std
+from vnet.transforms import normalize_mean, normalize_std, RandomLayout
 from PIL import Image as PILImage
 import os
-from object_detection.entities import Image, Boxes, Labels, resize
+from vnet import Image, Boxes, Labels, resize_boxes
 import cv2
 import albumentations as albm
 from .store import Rows
 from . import config
-from object_detection.transforms import RandomLayout
 
 bbox_params = {"format": "pascal_voc", "label_fields": ["labels"]}
 test_transforms = albm.Compose(
@@ -123,7 +121,7 @@ class TrainDataset(Dataset):
             )
         )
         indices = remove_small_boxes(boxes, 0.00001)
-        boxes = resize(Boxes(boxes[indices]), (w, h))
+        boxes = resize_boxes(Boxes(boxes[indices]), (w, h))
         labels = Labels(torch.tensor([0 for b in boxes]))
         transed = self.transforms(image=image, bboxes=boxes, labels=labels)
         return (
