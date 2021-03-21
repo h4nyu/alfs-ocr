@@ -1,5 +1,6 @@
 import torch
-import typing
+from typing import *
+from typing_extensions import Literal
 from torch.utils.data import Dataset
 from toolz import map
 import numpy as np
@@ -92,13 +93,13 @@ class TrainDataset(Dataset):
         self,
         repo: ImageRepository,
         rows: Rows,
-        mode: typing.Literal["test", "train"] = "train",
+        mode: Literal["test", "train"] = "train",
     ) -> None:
         self.repo = repo
         self.rows = rows
         self.transforms = train_transforms if mode == "train" else test_transforms
 
-    def __getitem__(self, idx: int) -> tuple[str, Image, Boxes, Labels]:
+    def __getitem__(self, idx: int) -> Tuple[str, Image, Boxes, Labels]:
         id = self.rows[idx]["id"]
         res = self.repo.find(id)
         image = np.array(

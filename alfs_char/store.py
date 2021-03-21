@@ -1,34 +1,35 @@
 import requests
 from urllib.parse import urljoin
 import os
-import typing
+from typing import *
+from typing_extensions import TypedDict
 
-Box = typing.TypedDict(
+Box = TypedDict(
     "Box",
     {
         "x0": float,
         "y0": float,
         "x1": float,
         "y1": float,
-        "confidence": typing.Optional[float],
+        "confidence": Optional[float],
     },
 )
-Row = typing.TypedDict(
+Row = TypedDict(
     "Row",
     {
         "id": str,
         "data": str,
-        "hasBox": typing.Optional[bool],
-        "boxes": typing.List[Box],
+        "hasBox": Optional[bool],
+        "boxes": List[Box],
     },
 )
-Rows = typing.List[Row]
+Rows = List[Row]
 
 
 class ImageRepository:
     def __init__(self, url: str = os.getenv("STORE_URL", "")) -> None:
         self.url = url
-        self.cache: typing.Dict[str, Row] = {}
+        self.cache: Dict[str, Row] = {}
 
     def filter(self) -> Rows:
         rows = requests.post(
@@ -51,7 +52,7 @@ class ImageRepository:
         return self.cache[id]
 
     def predict(
-        self, id: str, boxes: typing.List[Box], loss: typing.Optional[float] = None
+        self, id: str, boxes: List[Box], loss: Optional[float] = None
     ) -> None:
         res = requests.post(
             urljoin(self.url, "/api/v1/box/predict"),

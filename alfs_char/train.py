@@ -1,7 +1,7 @@
 from torch.cuda.amp import GradScaler, autocast
 import torch
 from tqdm import tqdm
-from typing import Any
+from typing import *
 from torch import Tensor
 from torch.utils.data import DataLoader
 from vnet.transforms import inv_normalize
@@ -32,12 +32,12 @@ visualize = Visualize(config.out_dir, "test", limit=6, box_limit=100)
 
 
 def collate_fn(
-    batch: list[Any],
-) -> tuple[ImageBatch, list[Boxes], list[Labels], list[str]]:
-    images: list[Any] = []
-    id_batch: list[str] = []
-    box_batch: list[Boxes] = []
-    label_batch: list[Labels] = []
+    batch: List[Any],
+) -> Tuple[ImageBatch, List[Boxes], List[Labels], List[str]]:
+    images: List[Any] = []
+    id_batch: List[str] = []
+    box_batch: List[Boxes] = []
+    label_batch: List[Labels] = []
     for id, img, boxes, labels in batch:
         c, h, w = img.shape
         images.append(img)
@@ -82,7 +82,7 @@ def train(epochs: int) -> None:
     )
     to_boxes = config.to_boxes
     scaler = GradScaler()
-    logs: dict[str, float] = {}
+    logs: Dict[str, float] = {}
 
     def train_step() -> None:
         loss_meter = MeanMeter()

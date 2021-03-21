@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from typing import List, Any
+from typing import *
 import torch
 import numpy as np
 from PIL import Image as PILImage
@@ -32,11 +32,9 @@ class DetectionInput(BaseModel):
     data: str  # base64 image data
 
 class DetectionOutput(BaseModel):
-    boxes: list[tuple[float, float, float, float]]
-    confidences: list[float]
+    boxes: List[Tuple[float, float, float, float]]
+    confidences: List[float]
 
-def detect_one(image:Image) -> tuple[Boxes]:
-    ...
 
 @app.post("/detect")
 async def detect(payload: DetectionInput) -> DetectionOutput:
@@ -46,9 +44,9 @@ async def detect(payload: DetectionInput) -> DetectionOutput:
         image_batch = torch.stack([transformed["image"]]).to(device)
         _, _, h, w = image_batch.shape
         netout = model(image_batch)
-        boxes_list, scores_list, _ = to_boxes(netout)
-        boxes = boxes_list[0]
-        confidences = scores_list[0]
+        boxes_List, scores_List, _ = to_boxes(netout)
+        boxes = boxes_List[0]
+        confidences = scores_List[0]
     original_wh = (pil_img.width, pil_img.height)
     padded_wh = (w, h)
     scale, pad = inv_scale_and_pad(original_wh, padded_wh)
