@@ -5,7 +5,6 @@ setup(
     version="0.1.0",
     install_requires=[
         "tqdm",
-        "opencv-python",
         "efficientnet_pytorch",
         "torchvision",
         "torch",
