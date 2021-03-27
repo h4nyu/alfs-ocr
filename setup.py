@@ -9,6 +9,7 @@ setup(
         "torchvision",
         "torch",
         "toolz",
+        "albumentations",
         "vnet",
         "fastapi",
         "uvicorn"
@@ -23,7 +24,6 @@ setup(
             "kaggle",
             "pandas",
             "torch-optimizer",
-            "albumentations",
             "scikit-learn",
         ]
     },

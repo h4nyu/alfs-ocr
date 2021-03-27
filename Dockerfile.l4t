@@ -1,10 +1,12 @@
-FROM nvcr.io/nvidia/l4t-pytorch:r32.5.0-pth1.7-py3
+FROM nvcr.io/nvidia/l4t-ml:r32.5.0-py3 
 
-RUN apt-get update && apt-get install -y python3-opencv 
 RUN cd "$(dirname $(which python3))" \
     && rm -f /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python \
     && ln -s pip3 pip
 
+ENV LANG C.UTF-8
+
+RUN pip install scikit-build
 WORKDIR /srv
 COPY . .
-RUN pip install -e ./vnet && pip install -e .[develop]
+RUN pip install -e ./vnet && pip install -e .
