@@ -28,12 +28,12 @@ backbone_idx = 4
 channels = 64
 depth = 1
 lr = 1e-4
-out_ids: List[Any] = [6, 7]
+out_ids: List[Any] = [5, 6, 7]
 num_classes = 1
 
 # criterion
 box_weight = 1.0
-cls_weight = 2.0
+cls_weight = 1.5
 
 metric: Tuple[str, WatchMode] = ("score", "max")
 pretrained = True
