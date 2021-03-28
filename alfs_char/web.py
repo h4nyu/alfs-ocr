@@ -28,8 +28,10 @@ model_loader.load_if_needed(model)
 model.eval()
 device = torch.device("cuda")
 
+
 class DetectionInput(BaseModel):
     data: str  # base64 image data
+
 
 class DetectionOutput(BaseModel):
     boxes: List[Tuple[float, float, float, float]]
@@ -53,5 +55,6 @@ async def detect(payload: DetectionInput) -> DetectionOutput:
     boxes = shift(boxes, (-pad[0], -pad[1]))
     boxes = resize_boxes(boxes, (scale, scale))
     return DetectionOutput(
-        boxes=boxes.tolist(), confidences=confidences.tolist(),
+        boxes=boxes.tolist(),
+        confidences=confidences.tolist(),
     )

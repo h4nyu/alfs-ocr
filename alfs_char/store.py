@@ -41,7 +41,8 @@ class ImageRepository:
     def find(self, id: str) -> Row:
         if id not in self.cache:
             img = requests.post(
-                    urljoin(self.url, "/api/v1/image/find"), json={"id": id, "hasData": True}
+                urljoin(self.url, "/api/v1/image/find"),
+                json={"id": id, "hasData": True},
             ).json()
             boxes = requests.post(
                 urljoin(self.url, "/api/v1/box/filter"),
@@ -51,9 +52,7 @@ class ImageRepository:
             self.cache[id] = img
         return self.cache[id]
 
-    def predict(
-        self, id: str, boxes: List[Box], loss: Optional[float] = None
-    ) -> None:
+    def predict(self, id: str, boxes: List[Box], loss: Optional[float] = None) -> None:
         res = requests.post(
             urljoin(self.url, "/api/v1/box/predict"),
             json={"imageId": id, "boxes": boxes, "loss": loss},

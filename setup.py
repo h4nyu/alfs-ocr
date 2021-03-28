@@ -13,7 +13,7 @@ setup(
         "torch-optimizer",
         "vnet",
         "fastapi",
-        "uvicorn"
+        "uvicorn",
     ],
     extras_require={
         "develop": [

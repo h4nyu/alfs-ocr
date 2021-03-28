@@ -21,7 +21,7 @@ from vnet.metrics import MeanAveragePrecision
 confidence_threshold = 0.1
 iou_threshold = 0.3
 batch_size = 5
-image_size = 1024
+image_size = 768
 
 backbone_idx = 4
 # model
@@ -53,11 +53,10 @@ out_dir = f"/store/efficientdet-{anchors.num_anchors}-{''.join([str(i) for i in 
 device = torch.device("cuda")
 use_amp = True
 
-Metrics = lambda : MeanAveragePrecision(
+Metrics = lambda: MeanAveragePrecision(
     num_classes=num_classes,
     iou_threshold=0.5,
 )
-
 
 
 backbone = EfficientNetBackbone(backbone_idx, out_channels=channels, pretrained=True)

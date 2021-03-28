@@ -1,5 +1,5 @@
 from torch.cuda.amp import GradScaler, autocast
-import torch
+import torch, os
 from tqdm import tqdm
 from typing import *
 from torch import Tensor
@@ -17,7 +17,7 @@ from vnet.effidet import (
     Visualize,
     Anchors,
 )
-from alfs_char.data import TrainDataset
+from alfs_char.data import TrainDataset, inv_normalize
 from vnet.metrics import MeanPrecition
 from alfs_char import config
 from alfs_char.config import model, model_loader, criterion, optimizer
@@ -25,6 +25,7 @@ from alfs_char.store import ImageRepository
 from logging import (
     getLogger,
 )
+from vnet.utils import DetectionPlot
 
 logger = getLogger(config.out_dir)
 
@@ -142,8 +143,13 @@ def train(epochs: int) -> None:
             box_loss_meter.update(box_loss.item())
             label_loss_meter.update(label_loss.item())
 
-            for boxes, gt_boxes, labels, gt_labels, confidences in zip(
-                box_batch, gt_box_batch, label_batch, gt_label_batch, confidence_batch
+            for image, boxes, gt_boxes, labels, gt_labels, confidences in zip(
+                image_batch,
+                box_batch,
+                gt_box_batch,
+                label_batch,
+                gt_label_batch,
+                confidence_batch,
             ):
                 metrics.add(
                     boxes=boxes,
@@ -157,11 +163,10 @@ def train(epochs: int) -> None:
         logs["test_box"] = box_loss_meter.get_value()
         logs["test_label"] = label_loss_meter.get_value()
         logs["score"], _ = metrics()
-        visualize(
-            image_batch,
-            (box_batch, confidence_batch, label_batch),
-            (gt_box_batch, gt_label_batch),
-        )
+        plot = DetectionPlot(inv_normalize(image))
+        plot.draw_boxes(gt_boxes, color="red")
+        plot.draw_boxes(boxes, color="blue")
+        plot.save(os.path.join(config.out_dir, "test.png"))
         model_loader.save_if_needed(
             model,
             logs[model_loader.key],

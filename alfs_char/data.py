@@ -11,7 +11,7 @@ from .store import ImageRepository
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 from torchvision.ops.boxes import clip_boxes_to_image, remove_small_boxes
-from vnet.transforms import normalize_mean, normalize_std, RandomLayout
+from vnet.transforms import normalize_mean, normalize_std, RandomLayout, inv_normalize
 from PIL import Image as PILImage
 import os
 from vnet import Image, Boxes, Labels, resize_boxes
@@ -37,7 +37,6 @@ test_transforms = albm.Compose(
 
 train_transforms = albm.Compose(
     [
-        # albm.LongestMaxSize(max_size=config.image_size),
         albm.PadIfNeeded(
             min_width=config.image_size,
             min_height=config.image_size,
@@ -85,7 +84,6 @@ train_transforms = albm.Compose(
     ],
     bbox_params=bbox_params,
 )
-
 
 
 class TrainDataset(Dataset):
