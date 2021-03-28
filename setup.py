@@ -10,6 +10,7 @@ setup(
         "torch",
         "toolz",
         "albumentations",
+        "torch-optimizer",
         "vnet",
         "fastapi",
         "uvicorn"
@@ -23,7 +24,6 @@ setup(
             "mypy",
             "kaggle",
             "pandas",
-            "torch-optimizer",
             "scikit-learn",
         ]
     },
