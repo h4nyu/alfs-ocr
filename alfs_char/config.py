@@ -19,7 +19,7 @@ from vnet.backbones.effnet import (
 from vnet.metrics import MeanAveragePrecision
 
 confidence_threshold = 0.1
-iou_threshold = 0.3
+iou_threshold = 0.2
 batch_size = 5
 image_size = 768
 
