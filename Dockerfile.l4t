@@ -6,7 +6,7 @@ RUN cd "$(dirname $(which python3))" \
 
 ENV LANG C.UTF-8
 
-RUN apt-get update && apt-get install libgeos-dev
+RUN apt-get update && apt-get install -y libgeos-dev
 RUN pip install scikit-build
 WORKDIR /srv
 COPY . .
