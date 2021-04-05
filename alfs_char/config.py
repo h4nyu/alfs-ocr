@@ -21,7 +21,7 @@ from vnet.metrics import MeanAveragePrecision
 confidence_threshold = 0.2
 iou_threshold = 0.2
 batch_size = 5
-image_size = 768
+image_size = 1024
 
 backbone_idx = 4
 # model
