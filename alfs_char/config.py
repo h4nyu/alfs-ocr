@@ -18,7 +18,7 @@ from vnet.backbones.effnet import (
 )
 from vnet.metrics import MeanAveragePrecision
 
-confidence_threshold = 0.2
+confidence_threshold = 0.5
 iou_threshold = 0.2
 batch_size = 5
 image_size = 1024
@@ -28,7 +28,7 @@ backbone_idx = 4
 channels = 64
 depth = 1
 lr = 1e-4
-out_ids: List[Any] = [5, 6, 7]
+out_ids: List[Any] = [6, 7]
 num_classes = 1
 
 # criterion
