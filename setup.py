@@ -9,7 +9,7 @@ setup(
         "torchvision",
         "torch",
         "toolz",
-        "albumentations",
+        "albumentations[imgaug]",
         "torch-optimizer",
         "vnet",
         "fastapi",

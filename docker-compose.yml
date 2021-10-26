@@ -3,6 +3,8 @@ version: '2.4'
 services:
   app:
     image: "alfs-ocr"
+    build:
+      context: .
     shm_size: '30gb'
     working_dir: /srv
     volumes:

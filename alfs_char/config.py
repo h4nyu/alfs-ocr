@@ -88,7 +88,7 @@ to_boxes = ToBoxes(
     iou_threshold=iou_threshold,
 )
 
-optimizer = optim.RAdam(
+optimizer = optim.Ranger(
     model.parameters(),
     lr=lr,
     eps=1e-8,
