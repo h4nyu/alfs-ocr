@@ -2,7 +2,7 @@ version: '2.4'
 
 services:
   app:
-    image: "${DOCKER_REGISTRY:-localhost}/alfs/ocr"
+    image: "alfs-ocr"
     shm_size: '30gb'
     working_dir: /srv
     volumes:
