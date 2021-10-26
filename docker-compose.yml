@@ -2,7 +2,7 @@ version: '2.4'
 
 services:
   app:
-    image: "${DOCKER_REGISTRY}/alfs/char-recog"
+    image: "${DOCKER_REGISTRY:-localhost}/alfs/ocr"
     shm_size: '30gb'
     working_dir: /srv
     volumes:
@@ -14,4 +14,4 @@ services:
     environment:
       - STORE_URL
     ports:
-      - "$PORT:8000"
+      - "${PORT:-8000}:8000"
