@@ -120,9 +120,9 @@ class TrainDataset(Dataset):
         transed = self.transform(image=image, bboxes=boxes, labels=labels)
         return dict(
             id=id,
-            image=transed["image"] / 255,
-            boxes=torch.tensor(transed["bboxes"]),
-            labels=torch.tensor(transed["labels"]),
+            image=(transed["image"] / 255).float(),
+            boxes=torch.tensor(transed["bboxes"]).float(),
+            labels=torch.tensor(transed["labels"]).long(),
         )
 
     def __len__(self) -> int:
