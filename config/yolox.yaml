@@ -9,7 +9,7 @@ depth: 1
 num_classes: 1
 feat_range: [3, 5, 6]
 box_iou_threshold: 0.3
-score_threshold: 0.9
+score_threshold: 0.6
 image_size: 512
 
 
