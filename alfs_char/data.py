@@ -11,125 +11,18 @@ from .store import ImageRepository
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 from torchvision.ops.boxes import clip_boxes_to_image, remove_small_boxes
-from vnet.transforms import normalize_mean, normalize_std, RandomLayout, inv_normalize
 from PIL import Image as PILImage
 import os
-from vnet import Image, Boxes, Labels, resize_boxes
-import cv2
 import albumentations as albm
 from .store import Rows
-from . import config
 
 bbox_params = {"format": "pascal_voc", "label_fields": ["labels"]}
-test_transforms = albm.Compose(
+
+Transform = lambda image_size: A.Compose(
     [
-        albm.LongestMaxSize(max_size=config.image_size),
-        albm.PadIfNeeded(
-            min_width=config.image_size,
-            min_height=config.image_size,
-            border_mode=cv2.BORDER_CONSTANT,
-        ),
-        A.Normalize(),
+        A.LongestMaxSize(max_size=image_size),
+        A.PadIfNeeded(min_height=image_size, min_width=image_size, border_mode=0),
         ToTensorV2(),
     ],
     bbox_params=bbox_params,
 )
-
-train_transforms = albm.Compose(
-    [
-        albm.PadIfNeeded(
-            min_width=config.image_size,
-            min_height=config.image_size,
-            border_mode=cv2.BORDER_CONSTANT,
-            p=0.5,
-        ),
-        A.Rotate(limit=(-5, 5), p=1.0, border_mode=0),
-        A.OneOf(
-            [
-                A.Blur(blur_limit=7, p=0.5),
-                A.MotionBlur(blur_limit=7, p=0.5),
-                A.MotionBlur(blur_limit=13, p=0.5),
-            ],
-            p=0.4,
-        ),
-        A.OneOf(
-            [
-                A.IAAAdditiveGaussianNoise(),
-                A.GaussNoise(),
-            ],
-            p=0.2,
-        ),
-        A.Cutout(),
-        A.ColorJitter(p=0.2),
-        albm.RandomBrightnessContrast(),
-        A.HueSaturationValue(
-            p=0.3,
-            hue_shift_limit=15,
-            sat_shift_limit=20,
-            val_shift_limit=15,
-        ),
-        A.OneOf(
-            [
-                A.RandomSizedBBoxSafeCrop(
-                    height=config.image_size,
-                    width=config.image_size,
-                    p=1.0,
-                ),
-                A.RandomResizedCrop(height=config.image_size, width=config.image_size),
-            ],
-            p=1.0,
-        ),
-        A.Normalize(),
-        ToTensorV2(),
-    ],
-    bbox_params=bbox_params,
-)
-
-
-class TrainDataset(Dataset):
-    def __init__(
-        self,
-        repo: ImageRepository,
-        rows: Rows,
-        mode: Literal["test", "train"] = "train",
-    ) -> None:
-        self.repo = repo
-        self.rows = rows
-        self.transforms = train_transforms if mode == "train" else test_transforms
-
-    def __getitem__(self, idx: int) -> Tuple[str, Image, Boxes, Labels]:
-        id = self.rows[idx]["id"]
-        res = self.repo.find(id)
-        image = np.array(
-            PILImage.open(BytesIO(base64.b64decode(res["data"]))).convert("RGB")
-        )
-        h, w, _ = image.shape
-        boxes = Boxes(
-            clip_boxes_to_image(
-                torch.tensor(
-                    [
-                        [
-                            b["x0"],
-                            b["y0"],
-                            b["x1"],
-                            b["y1"],
-                        ]
-                        for b in res["boxes"]
-                    ]
-                ),
-                (1.0, 1.0),
-            )
-        )
-        indices = remove_small_boxes(boxes, 0.00001)
-        boxes = resize_boxes(Boxes(boxes[indices]), (w, h))
-        labels = Labels(torch.tensor([0 for b in boxes]))
-        transed = self.transforms(image=image, bboxes=boxes, labels=labels)
-        return (
-            id,
-            Image(transed["image"]),
-            Boxes(torch.tensor(transed["bboxes"])),
-            Labels(torch.tensor(transed["labels"])),
-        )
-
-    def __len__(self) -> int:
-        return len(self.rows)
