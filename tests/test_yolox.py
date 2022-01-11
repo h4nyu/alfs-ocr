@@ -18,7 +18,7 @@ from alfs_char.data import (
     collate_fn,
 )
 
-cfg = OmegaConf.load("/app/kuzushiji_bench/config/yolox.yaml")
+cfg = OmegaConf.load("/app/config/yolox.yaml")
 writer = get_writer(cfg)
 
 seed_everything()
