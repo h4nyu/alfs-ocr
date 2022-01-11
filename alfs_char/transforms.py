@@ -10,8 +10,7 @@ import albumentations as albm
 
 
 class FilterBbox(albm.BasicTransform):
-    def __init__(self, always_apply: bool = False, p: float = 1.0) -> None:
-        super().__init__(always_apply, p)
+    def __init__(self, always_apply: bool = False, p: float = 1.0) -> None: super().__init__(always_apply, p)
 
     def __call__(self, force_apply: bool = True, **kwargs: Any) -> Any:
         sample = kwargs.copy()
