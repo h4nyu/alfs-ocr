@@ -9,7 +9,7 @@ depth: 1
 num_classes: 1
 feat_range: [3, 5, 6]
 box_iou_threshold: 0.15
-score_threshold: 0.7
+score_threshold: 0.5
 image_size: 512
 
 
@@ -31,13 +31,13 @@ criterion:
 train_loader:
   batch_size: 4
   shuffle: true
-  num_workers: 6
+  num_workers: 5
   drop_last: true
 
 val_loader:
   batch_size: 4
   shuffle: false
-  num_workers: 6
+  num_workers: 5
 
 fold:
   n_splits: 5
