@@ -3,13 +3,22 @@ from typing import Any
 from omegaconf import OmegaConf
 from vision_tools.backbone import EfficientNet
 from vision_tools.neck import CSPPAFPN
-from vision_tools.yolox import YOLOX
+from vision_tools.yolox import YOLOX, Criterion
+from vision_tools.assign import SimOTA
 from vision_tools.utils import Checkpoint
+from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
 
 
 def get_model_name(cfg: Any) -> str:
     return f"{cfg.name}-{cfg.feat_range[0]}-{cfg.feat_range[1]}-{cfg.hidden_channels}-{cfg.backbone.name}"
+
+
+def get_writer(cfg: Any) -> SummaryWriter:
+    model_name = get_model_name(cfg)
+    return SummaryWriter(
+        f"runs/{model_name}-lr_{cfg.optimizer.lr}-box_w_{cfg.criterion.box_weight}-radius_{cfg.assign.radius}"
+    )
 
 
 def get_model(cfg: Any) -> YOLOX:
@@ -28,6 +37,12 @@ def get_model(cfg: Any) -> YOLOX:
         score_threshold=cfg.score_threshold,
     )
     return model
+
+
+def get_criterion(cfg: Any) -> Criterion:
+    assign = SimOTA(**cfg.assign)
+    criterion = Criterion(assign=assign, **cfg.criterion)
+    return criterion
 
 
 def get_checkpoint(cfg: Any) -> Checkpoint:

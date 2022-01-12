@@ -23,7 +23,7 @@ logger = getLogger(__name__)
 app = FastAPI()
 app.add_middleware(CORSMiddleware)
 
-cfg = OmegaConf.load(os.path.join(os.path.dirname(__file__), "config/yolox.yaml"))
+cfg = OmegaConf.load("/app/config/yolox.yaml")
 model = get_model(cfg)
 model.eval()
 checkpoint = get_checkpoint(cfg)
@@ -54,12 +54,13 @@ def inv_scale_and_pad(
         pad = (padded_w - original_w / scale) / 2
         return scale, (pad, 0)
 
+
 @app.post("/detect")
 async def detect(payload: DetectionInput) -> DetectionOutput:
     pil_img = PILImage.open(BytesIO(base64.b64decode(payload.data))).convert("RGB")
     transformed = transform(image=np.array(pil_img), labels=[], bboxes=[])
     with torch.no_grad():
-        image_batch = torch.stack([transformed["image"] / 255] ).to(cfg.device)
+        image_batch = torch.stack([transformed["image"] / 255]).to(cfg.device)
         _, _, h, w = image_batch.shape
         netout = model(image_batch)
         boxes = netout["box_batch"][0]

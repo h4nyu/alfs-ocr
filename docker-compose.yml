@@ -1,16 +1,20 @@
 version: '2.4'
 
+x-app: &app
+  working_dir: /app
+  image: "alfs-ocr"
+  build: 
+    context: .
+  volumes:
+    - .:/app
+    - ./store:/store
+    - ./.cache:/root/.cache
+
+
 services:
   app:
-    image: "alfs-ocr"
-    build:
-      context: .
+    <<: *app
     shm_size: '30gb'
-    working_dir: /app
-    volumes:
-      - .:/app
-      - ./store:/store
-      - ./.cache:/root/.cache
     runtime: nvidia
     command: uvicorn alfs_char.web:app --reload --host 0.0.0.0
     environment:
@@ -18,3 +22,11 @@ services:
     restart: on-failure
     ports:
       - "${PORT:-8000}:8000"
+
+
+  tensorboard:
+    <<: *app
+    command: tensorboard --logdir=runs --host 0.0.0.0 --port=${TENSORBOARD_PORT}
+    ports:
+      - "${TENSORBOARD_PORT}:${TENSORBOARD_PORT}"
+

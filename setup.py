@@ -11,7 +11,7 @@ setup(
         "toolz",
         "albumentations[imgaug]",
         "torch-optimizer",
-        'vision_tools @ git+https://github.com/h4nyu/vision-tools.git@aff8286e3128ef81a3b454cc52dc8401269aa858#egg=vision_tools&subdirectory=vision_tools',
+        "vision_tools @ git+https://github.com/h4nyu/vision-tools.git@6cc37233d7e8394f6044635bb4c901c6ec612190#egg=vision_tools&subdirectory=vision_tools",
         "fastapi",
         "uvicorn",
     ],
@@ -25,6 +25,7 @@ setup(
             "kaggle",
             "pandas",
             "scikit-learn",
+            "tensorboard",
         ]
     },
 )

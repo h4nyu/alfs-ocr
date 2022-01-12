@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 import os
 from typing import *
 from typing_extensions import TypedDict
+from toolz import unique, valfilter, groupby
 
 Box = TypedDict(
     "Box",
@@ -33,10 +34,18 @@ class ImageRepository:
 
     def filter(self) -> Rows:
         rows = requests.post(
-            urljoin(self.url, "/api/v1/image/filter"),
-            json={"state": "Done"},
+            urljoin(self.url, "/api/v1/box/filter"),
+            json={},
         ).json()
-        return [r for r in rows if r["boxCount"] > 0]
+        g = groupby(lambda x: x["imageId"], rows)
+        g = valfilter(lambda x: len(x) > 2, g)
+        image_ids = list(g.keys())
+
+        rows = requests.post(
+            urljoin(self.url, "/api/v1/image/filter"),
+            json=dict(ids=image_ids),
+        ).json()
+        return rows
 
     def find(self, id: str) -> Row:
         if id not in self.cache:
