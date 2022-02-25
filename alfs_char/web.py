@@ -27,7 +27,8 @@ cfg = OmegaConf.load("/app/config/yolox.yaml")
 model = get_model(cfg)
 model.eval()
 checkpoint = get_checkpoint(cfg)
-checkpoint.load_if_exists(model=model, device=cfg.device)
+state = torch.load("/app/store/yolox-3-5-64-efficientnet-b3/checkpoint.pth", map_location=cfg.device)
+model.load_state_dict(state)
 transform = Transform(cfg.image_size)
 
 

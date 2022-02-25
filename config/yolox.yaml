@@ -1,6 +1,6 @@
 name: yolox
 
-device: cuda
+device: cpu
 use_amp: false
 num_epochs: 999
 hidden_channels: 64
