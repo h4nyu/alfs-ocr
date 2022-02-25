@@ -14,12 +14,11 @@ x-app: &app
 services:
   app:
     <<: *app
-    shm_size: '30gb'
-    runtime: nvidia
     command: uvicorn alfs_char.web:app --reload --host 0.0.0.0
     environment:
       - STORE_URL
-    restart: on-failure
+      - NVIDIA_VISIBLE_DEVICES
+    restart: always
     ports:
       - "${PORT:-8000}:8000"
 

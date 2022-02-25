@@ -11,7 +11,7 @@ setup(
         "toolz",
         "albumentations[imgaug]",
         "torch-optimizer",
-        "vision_tools @ git+https://github.com/h4nyu/vision-tools.git@6cc37233d7e8394f6044635bb4c901c6ec612190#egg=vision_tools&subdirectory=vision_tools",
+        "vision_tools @ git+https://github.com/h4nyu/vision-tools.git@0e5172486a65237a6a6ab9e631e35e5a06355e37#egg=vision_tools&subdirectory=vision_tools",
         "fastapi",
         "uvicorn",
     ],
